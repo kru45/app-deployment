@@ -1,9 +1,15 @@
 pipeline {
     agent any
     stages {
+        stage('Checkout') {
+            steps {
+                // Ensure you have "GitHub" configured or use your repo URL here
+                git branch: 'main', url: 'https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git'
+            }
+        }
         stage('Build') {
             steps {
-                // 'node-latest' must match the name you used in the Global Tool Configuration
+                // Use the 'node-latest' tool you configured in Step 2
                 nodejs('node-latest') {
                     sh 'npm install'
                     sh 'npm run build'
@@ -12,9 +18,9 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                // This command copies your build to the Nginx container
-                // Replace 'my-web-server' with the name of your Nginx container
-                sh 'docker cp build/. my-web-server:/usr/share/nginx/html'
+                echo 'Deploying to Nginx...'
+                // This copies the static files from the build folder into the nginx container
+                sh 'docker cp dist/. my-web-server:/usr/share/nginx/html'
             }
         }
     }
