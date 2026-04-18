@@ -4,7 +4,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Ensure your GitHub URL is correct here
-                git branch: 'main', url: 'https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git'
+                git branch: 'main', url: 'https://github.com/kru45/app-deployment.git'
             }
         }
         stage('Build') {
