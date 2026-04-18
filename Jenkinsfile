@@ -1,25 +1,16 @@
 pipeline {
     agent any
     stages {
-        stage('Checkout') {
-            steps {
-                // Ensure your GitHub URL is correct here
-                git branch: 'main', url: 'https://github.com/kru45/app-deployment.git'
-            }
-        }
         stage('Build') {
             steps {
-                // Ensure the name here matches exactly what you set in Jenkins Global Tool Configuration
-                nodejs('node-latest') {
-                    sh 'npm install'
-                    sh 'npm run build'
-                }
+                // This will use whatever 'npm' is found in the Jenkins container's PATH
+                sh 'npm install'
+                sh 'npm run build'
             }
         }
         stage('Deploy') {
             steps {
-                echo 'Deploying to Nginx...'
-                // This command copies your production build to the Nginx container
+                // This copies the static files to your Nginx container
                 sh 'docker cp build/. my-web-server:/usr/share/nginx/html'
             }
         }
