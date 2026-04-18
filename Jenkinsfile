@@ -1,17 +1,21 @@
 pipeline {
     agent any
+    
     stages {
         stage('Build') {
+            agent {
+                docker { image 'node:20-alpine' }
+            }
             steps {
-                // This will use whatever 'npm' is found in the Jenkins container's PATH
                 sh 'npm install'
                 sh 'npm run build'
             }
         }
+        
         stage('Deploy') {
             steps {
-                // This copies the static files to your Nginx container
-                sh 'docker cp build/. my-web-server:/usr/share/nginx/html'
+                // This 'sh' runs on your host machine, where the Docker daemon lives
+                sh 'docker cp my-react-app/build/. my-web-server:/usr/share/nginx/html'
             }
         }
     }
