@@ -3,15 +3,17 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                // Now that npm is installed globally in the container, these will work
-                sh 'npm install'
-                sh 'npm run build'
+                // 'react-app' is the folder name created by 'npx create-react-app'
+                dir('my-react-app') { 
+                    sh 'npm install'
+                    sh 'npm run build'
+                }
             }
         }
         stage('Deploy') {
             steps {
-                // This copies your build files to the web server container
-                sh 'docker cp build/. my-web-server:/usr/share/nginx/html'
+                // Ensure you point to the build folder inside your app folder
+                sh 'docker cp my-react-app/build/. my-web-server:/usr/share/nginx/html'
             }
         }
     }
