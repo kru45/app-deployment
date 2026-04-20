@@ -10,8 +10,10 @@ pipeline {
 
         stage('Install & Build') {
             steps {
-                sh 'npm install'
-                sh 'npm run build'
+                dir('my-react-app') {
+                    sh 'npm install'
+                    sh 'npm run build'
+                }
             }
         }
 
