@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/kru45/react-app.git'
+                git 'https://github.com/kru45/app-deployment.git'
             }
         }
 
