@@ -1,19 +1,33 @@
 pipeline {
     agent any
+
     stages {
-        stage('Build') {
+        stage('Checkout') {
             steps {
-                // 'react-app' is the folder name created by 'npx create-react-app'
-                dir('my-react-app') { 
-                    sh 'npm install'
-                    sh 'npm run build'
-                }
+                git 'https://github.com/kru45/react-app.git'
             }
         }
-        stage('Deploy') {
+
+        stage('Install & Build') {
             steps {
-                // Ensure you point to the build folder inside your app folder
-                sh 'docker cp my-react-app/build/. my-web-server:/usr/share/nginx/html'
+                sh 'npm install'
+                sh 'npm run build'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t react-app .'
+            }
+        }
+
+        stage('Run Container') {
+            steps {
+                sh '''
+                docker stop react-container || true
+                docker rm react-container || true
+                docker run -d -p 3000:80 --name react-container react-app
+                '''
             }
         }
     }
