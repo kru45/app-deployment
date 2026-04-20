@@ -18,10 +18,15 @@ pipeline {
         }
 
         stage('Build Docker Image') {
-            steps {
-                sh 'docker build -t react-app .'
-            }
+    steps {
+        // If Dockerfile is inside the subfolder:
+        dir('my-react-app') {
+            sh 'docker build -t react-app .'
         }
+        // OR, if Dockerfile is in the root, use the full path:
+        // sh 'docker build -t react-app -f Dockerfile .'
+    }
+}
 
         stage('Run Container') {
             steps {
