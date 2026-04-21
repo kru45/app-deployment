@@ -10,9 +10,8 @@ pipeline {
         
         stage('Install and Build') {
             steps {
-                // This 'dir' block tells Jenkins to perform 
-                // the commands specifically inside 'my-react-app'
-                dir('my-react-app') {
+                // Navigate into the parent folder, then the react folder
+                dir('app-deployment/my-react-app') {
                     sh 'npm install'
                     sh 'npm run build'
                 }
@@ -21,8 +20,8 @@ pipeline {
         
         stage('Archive') {
             steps {
-                // Collect the build files from the subfolder
-                archiveArtifacts artifacts: 'my-react-app/build/**', fingerprint: true
+                // Archive from the deep path
+                archiveArtifacts artifacts: 'app-deployment/my-react-app/build/**', fingerprint: true
             }
         }
     }
