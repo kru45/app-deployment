@@ -1,12 +1,5 @@
 pipeline {
-    agent {
-        // This will automatically pull the official Node image
-        // and run your build inside it.
-        docker { 
-            image 'node:20-alpine' 
-            args '-u root' // Helps avoid permission issues inside the container
-        }
-    }
+    agent any
     
     stages {
         stage('Checkout') {
@@ -17,16 +10,9 @@ pipeline {
         
         stage('Build') {
             steps {
-                sh 'npm install'
-                sh 'npm run build'
-            }
-        }
-        
-        stage('Archive Build Artifacts') {
-            steps {
-                // This saves the 'build' folder so you can download it 
-                // directly from the Jenkins dashboard
-                archiveArtifacts artifacts: 'build/**', fingerprint: true
+                // This command pulls the node image, maps your current workspace, 
+                // installs dependencies, and builds the app.
+                sh 'docker run --rm -v "${PWD}:/app" -w /app node:20-alpine sh -c "npm install && npm run build"'
             }
         }
     }
