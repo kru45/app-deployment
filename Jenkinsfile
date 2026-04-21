@@ -8,11 +8,18 @@ pipeline {
             }
         }
         
-        stage('Build') {
+        stage('Install and Build') {
             steps {
-                // This command pulls the node image, maps your current workspace, 
-                // installs dependencies, and builds the app.
-                sh 'docker run --rm -v "${PWD}:/app" -w /app node:20-alpine sh -c "npm install && npm run build"'
+                // Jenkins will use the Node/npm versions installed on the server
+                sh 'npm install'
+                sh 'npm run build'
+            }
+        }
+        
+        stage('Archive') {
+            steps {
+                // This keeps the build output accessible in Jenkins
+                archiveArtifacts artifacts: 'build/**', fingerprint: true
             }
         }
     }
