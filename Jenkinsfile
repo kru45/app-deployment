@@ -1,40 +1,32 @@
 pipeline {
-    agent any
-
+    agent {
+        // This will automatically pull the official Node image
+        // and run your build inside it.
+        docker { 
+            image 'node:20-alpine' 
+            args '-u root' // Helps avoid permission issues inside the container
+        }
+    }
+    
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/kru45/app-deployment.git'
+                checkout scm
             }
         }
-
-        stage('Install & Build') {
+        
+        stage('Build') {
             steps {
-                dir('my-react-app') {
-                    sh 'npm install'
-                    sh 'npm run build'
-                }
+                sh 'npm install'
+                sh 'npm run build'
             }
         }
-
-        stage('Build Docker Image') {
-    steps {
-        // If Dockerfile is inside the subfolder:
-        dir('my-react-app') {
-            sh 'docker build -t react-app .'
-        }
-        // OR, if Dockerfile is in the root, use the full path:
-        // sh 'docker build -t react-app -f Dockerfile .'
-    }
-}
-
-        stage('Run Container') {
+        
+        stage('Archive Build Artifacts') {
             steps {
-                sh '''
-                docker stop react-container || true
-                docker rm react-container || true
-                docker run -d -p 3000:80 --name react-container react-app
-                '''
+                // This saves the 'build' folder so you can download it 
+                // directly from the Jenkins dashboard
+                archiveArtifacts artifacts: 'build/**', fingerprint: true
             }
         }
     }
