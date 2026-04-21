@@ -10,16 +10,19 @@ pipeline {
         
         stage('Install and Build') {
             steps {
-                // Jenkins will use the Node/npm versions installed on the server
-                sh 'npm install'
-                sh 'npm run build'
+                // This 'dir' block tells Jenkins to perform 
+                // the commands specifically inside 'my-react-app'
+                dir('my-react-app') {
+                    sh 'npm install'
+                    sh 'npm run build'
+                }
             }
         }
         
         stage('Archive') {
             steps {
-                // This keeps the build output accessible in Jenkins
-                archiveArtifacts artifacts: 'build/**', fingerprint: true
+                // Collect the build files from the subfolder
+                archiveArtifacts artifacts: 'my-react-app/build/**', fingerprint: true
             }
         }
     }
